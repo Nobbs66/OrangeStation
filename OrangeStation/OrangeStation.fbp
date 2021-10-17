@@ -1,0 +1,15 @@
+[Project]
+Version=3
+Description=PS2 Emu
+Api=fb (FreeBASIC)
+[Make]
+Current=1
+1=Windows GUI,fbc -s gui
+Recompile=2
+Module=Module Build,fbc -c
+[TabOrder]
+TabOrder=
+[File]
+1=OrangeStation.bas
+[BreakPoint]
+1=
