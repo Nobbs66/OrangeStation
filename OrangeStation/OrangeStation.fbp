@@ -8,8 +8,21 @@ Current=1
 Recompile=2
 Module=Module Build,fbc -c
 [TabOrder]
-TabOrder=
+TabOrder=1,2,3,4
 [File]
 1=OrangeStation.bas
+2=EE.bi
+3=EE_Instructions.bi
+4=bus.bi
+5=temp.bi
 [BreakPoint]
 1=
+2=
+3=
+4=
+5=
+[FileInfo]
+1=0,26,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2=0,7,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3=0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4=0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
