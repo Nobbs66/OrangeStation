@@ -1,4 +1,3 @@
-
 Declare Sub ee_ADD()
 Declare Sub ee_ADDI()
 Declare Sub ee_ADDIU()
@@ -1096,7 +1095,7 @@ Sub cop0_MFBPC()
 
 End Sub
 Sub cop0_MFC0()
-
+	Print "Move from COP0" 
 End Sub
 Sub cop0_MFDAB()
 
@@ -1303,8 +1302,6 @@ End Sub
 Sub MMI3()
 
 End Sub
-
-
 Sub DecodeOpcode()
 	NORMAL(cpu.opcode Shr 21)()
 End sub

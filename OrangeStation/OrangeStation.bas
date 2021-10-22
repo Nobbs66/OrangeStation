@@ -16,12 +16,12 @@ Sub loadBIOS
 		Print "Please provide a valid bios rom"
 	Sleep
 	EndIf
-	Get #1,, bios()
+	Get #1,, bus.bios()
 	close #1
 End Sub
 
 
 loadBIOS
 
-Print Hex(bios(&h1))
+Print Hex(bus.bios(&h3b41d1))
 sleep
