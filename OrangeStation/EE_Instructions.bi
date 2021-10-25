@@ -87,7 +87,7 @@ Declare Sub ee_SW()
 Declare Sub ee_SWL()
 Declare Sub ee_SWR()
 Declare Sub ee_SYNC()
-Declare Sub ee_SYCALL()
+Declare Sub ee_SYSCALL()
 Declare Sub ee_TEQ()
 Declare Sub ee_TEQI()
 Declare Sub ee_TGE()
@@ -305,10 +305,12 @@ Declare Sub cop1_SUBAS()
 Declare Sub cop1_SWC1()
 Declare Sub cop1_DEFAULT
 
-Declare Sub DecodeOpcode()
+Declare Sub DecodeOp()
 Declare Sub SPECIAL()
 Declare Sub REGIMM()
 Declare Sub COP0()
+Declare Sub BC0()
+Declare Sub TLB()
 Declare Sub COP1()
 Declare Sub COP2()
 Declare Sub MMI()
@@ -318,10 +320,10 @@ Declare Sub MM2()
 Declare Sub MMI3()
 
 
-Dim Shared NORMAL(0 To 63) As Sub() => _
+Dim Shared tbl_NORMAL(0 To 63) As Sub() => _
 {	@SPECIAL,	 @REGIMM,		@ee_J, 	 	 @ee_JAL, 	  @ee_BEQ,  	@ee_BNE, 	 @ee_BLEZ, 		@ee_BGTZ, 	 _ '000
 	@ee_ADDI, 	 @ee_ADDIU, 	@ee_SLTI, 	 @ee_SLTIU,   @ee_ANDI, 	@ee_ORI, 	 @ee_XORI, 		@ee_LUI,  	 _ '001
-	@COP0, 		 @COP1, 	 		@COP2, 		 @ee_DEFAULT, @ee_BEQL, 	@ee_BNEL, 	 @ee_BLEZL, 	@ee_BGTZL, 	 _ '010
+	@COP0, 	 	@COP1, 	 		@COP2, 		 @ee_DEFAULT, @ee_BEQL, 	@ee_BNEL, 	 @ee_BLEZL, 	@ee_BGTZL, 	 _ '010
 	@ee_DADDI,	 @ee_DADDIU,	@ee_LDL, 	 @ee_LDR, 	  @COP2, 		@ee_DEFAULT, @mmi_LQ, 		@mmi_SQ, 	 _	'011
 	@ee_LB, 		 @ee_LH, 		@ee_LWL, 	 @ee_LW, 	  @ee_LBU, 		@ee_LHU, 	 @ee_LWR, 		@ee_LWU, 	 _ '100
 	@ee_SB, 		 @ee_SH, 		@ee_SWL, 	 @ee_SW, 	  @ee_SDL, 		@ee_SDR, 	 @ee_SWR, 		@ee_DEFAULT, _ '101
@@ -330,9 +332,18 @@ Dim Shared NORMAL(0 To 63) As Sub() => _
 }
 
 
-/'
-Dim Shared SPECIAL(0 To 63) As Sub() => _
 
+Dim Shared tbl_SPECIAL(0 To 63) As Sub() => _
+{	@ee_SLL, 	@ee_DEFAULT, @ee_SRL,  @ee_SRA,  @ee_SLLV, 	 @ee_DEFAULT, 	@ee_SRLV, 		@ee_SRAV, 		_
+	@ee_JR, 		@ee_JALR, 	 @ee_MOVZ, @ee_MOVN, @ee_SYSCALL, @ee_BREAK, 	@ee_DEFAULT, 	@ee_SYNC, 		_
+	@ee_MFHI, 	@ee_MTHI, 	 @ee_MFLO, @ee_MTLO, @ee_DSLLV, 	 @ee_DEFAULT, 	@ee_DSRLV, 		@ee_DSRAV, 		_
+	@ee_MULT, 	@ee_MULTU, 	 @ee_DIV,  @ee_DIVU, @ee_DEFAULT, @ee_DEFAULT, 	@ee_DEFAULT, 	@ee_DEFAULT, 	_
+	@ee_ADD, 	@ee_ADDU, 	 @ee_SUB,  @ee_SUBU, @ee_AND, 	 @ee_OR, 		@ee_XOR, 		@ee_NOR, 		_
+	@mmi_MFSA, 	@mmi_MTSA, 	 @ee_SLT,  @ee_SLTU, @ee_DADD, 	 @ee_DADDU, 	@ee_DSUB, 		@ee_DSUBU, 		_
+	@ee_TGE, 	@ee_TGEU, 	 @ee_TLT,  @ee_TLTU, @ee_TEQ, 	 @ee_DEFAULT, 	@ee_TNE, 		@ee_DEFAULT, 	_
+	@ee_DSLL, 	@ee_DEFAULT, @ee_DSRL, @ee_DSRA, @ee_DSLL32,  @ee_DEFAULT, 	@ee_DSRL32, 	@ee_DSRA32 		_
+}
+/'
 Dim Shared REGIMM(0 To 31) As Sub() => _
 
 Dim Shared MMI(0 To 63) As Sub() => _
@@ -344,9 +355,14 @@ Dim Shared MMI1(0 To 31) As Sub() => _
 Dim Shared MMI2(0 To 31) As Sub() => _
 
 Dim Shared MMI3(0 To 31) As Sub() => _
-
-Dim Shared COP0(0 To 31) As Sub() => _
-
+'/
+Dim Shared tbl_COP0(0 To 31) As Sub() => _
+{ 	@cop0_MFC0,  @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @cop0_MTC0,  @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, _
+	@BC0, 		 @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, _
+	@TLB, 		 @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, _
+	@ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT  _
+}
+/'
 Dim Shared BC0(0 To 31) As Sub() => _
 
 Dim Shared TLB(0 To 63) As Sub() => _
@@ -360,6 +376,12 @@ Dim Shared FPUS(0 To 63) As Sub() => _
 Dim Shared FPUW(0 To 63) As Sub() => _
 
 '/
+Sub BC0()
+	
+End Sub
+Sub TLB()
+	
+End Sub
 Sub ee_ADD()
 
 End Sub
@@ -421,7 +443,7 @@ Sub ee_BLTZL()
 
 End Sub
 Sub ee_BNE()
-
+	Print "BNE"
 End Sub
 Sub ee_BNEL()
 
@@ -589,7 +611,7 @@ Sub ee_SLT()
 
 End Sub
 Sub ee_SLTI()
-
+	Print "SLTI"
 End Sub
 Sub ee_SLTIU()
 
@@ -627,7 +649,7 @@ End Sub
 Sub ee_SYNC()
 
 End Sub
-Sub ee_SYCALL()
+Sub ee_SYSCALL()
 
 End Sub
 Sub ee_TEQ()
@@ -1273,13 +1295,13 @@ Sub cop1_DEFAULT()
 
 End Sub
 Sub SPECIAL()
-
+	tbl_SPECIAL(cpu.opcode And &h3F)()
 End Sub
 Sub REGIMM()
 
 End Sub
 Sub COP0()
-
+	tbl_COP0((cpu.opcode Shr 21) And &h1F)()
 End Sub
 Sub COP1()
 
@@ -1302,7 +1324,7 @@ End Sub
 Sub MMI3()
 
 End Sub
-Sub DecodeOpcode()
-	NORMAL(cpu.opcode Shr 21)()
+Sub DecodeOp()
+	tbl_NORMAL(cpu.opcode Shr 26)()
 End sub
 

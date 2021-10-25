@@ -10,7 +10,23 @@ Type cpus
 	Declare Sub fetchOP()
 End Type
 Dim Shared cpu As cpus
-
+#Include "ee_instructions.bi"
 Sub fetchOp()
-	
+	 cpu.Opcode = read32(cpu.PC)
+	 Print Hex(cpu.Opcode)
+End Sub
+Sub init_EE()
+	cpu.PC = &hBFC00000
+End Sub
+Sub run_EE()
+	Do
+		fetchOp()
+		decodeOp()
+		cpu.PC += 4
+		Sleep
+		
+	Loop While Not MultiKey(SC_ESCAPE)
+	fetchOp()
+	decodeOp()
+	Sleep(10000)
 End Sub
