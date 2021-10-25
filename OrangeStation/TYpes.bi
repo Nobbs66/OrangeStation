@@ -10,8 +10,8 @@ Type uint128
 			int3 As ULong
 		End Type
 		Type
-			double0 As ULongInt
-			double1 As ULongInt
+			r0 As ULongInt
+			r1 As ULongInt
 		End Type
 	End Union
 End Type 

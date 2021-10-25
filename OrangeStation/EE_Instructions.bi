@@ -1,7 +1,7 @@
 #Define rs ((cpu.Opcode Shr 21) And &h1F)
 #Define rt ((cpu.Opcode Shr 16) And &h1F)
 #Define rd ((cpu.Opcode Shr 11) And &h1F)
-#Define imm cpu.opcode And &hFFFF
+#Define imm (cpu.opcode And &hFFFF)
 Declare Sub ee_ADD()
 Declare Sub ee_ADDI()
 Declare Sub ee_ADDIU()
@@ -393,7 +393,9 @@ Sub ee_ADDI()
 
 End Sub
 Sub ee_ADDIU()
-
+	cpu.reg(rt).r0 = cpu.reg(rs).r0 + Cast(LongInt,imm)
+	Print Hex(imm)
+	Print Hex(cpu.reg(rt).r0)
 End Sub
 Sub ee_ADDU()
 
@@ -448,12 +450,13 @@ Sub ee_BLTZL()
 End Sub
 Sub ee_BNE()
 	Print "BNE"
-	If cpu.reg(rs).double0 <> cpu.reg(rt).double0 Then
+	If cpu.reg(rs).r0 <> cpu.reg(rt).r0 Then
 		Dim As Integer temp = Cast(Long, imm)
 		temp Shl= 2
 		cpu.branchPC = cpu.PC + temp + 4
-		cpu.PC += 4
-		doBranch()
+		cpu.branchPending = 1
+		'cpu.PC += 4
+		'doBranch()
 	EndIf
 End Sub
 Sub ee_BNEL()
@@ -523,7 +526,12 @@ Sub ee_JALR()
 
 End Sub
 Sub ee_JR()
-
+	Print "JR"
+	cpu.branchPending = 1
+	cpu.branchPC = cpu.reg(rs).r0
+	Print Hex(cpu.branchPC)
+	
+	'doBranch()
 End Sub
 Sub ee_LB()
 
@@ -547,7 +555,11 @@ Sub ee_LHU()
 
 End Sub
 Sub ee_LUI()
-
+	Print "LUI"
+	Dim temp As LongInt
+	temp = imm
+	temp Shl= 16
+	cpu.Reg(rt).r0 = temp
 End Sub
 Sub ee_LW()
 
@@ -592,7 +604,8 @@ Sub ee_OR()
 
 End Sub
 Sub ee_ORI()
-
+	Print "ORI"
+	cpu.reg(rt).r0 = cpu.reg(rs).r0 Or imm
 End Sub
 Sub ee_PREF()
 
@@ -626,8 +639,8 @@ Sub ee_SLTI()
 	Dim val1 As ULongInt
 	Dim val2 As ULongInt
 	val1 = Cast(LongInt,imm)
-	val2 = Cast(LongInt,cpu.reg(rs).double0)
-	If val2 < val1 Then cpu.reg(rt).double0 = 1 Else cpu.reg(rt).double0 = 0
+	val2 = Cast(LongInt,cpu.reg(rs).r0)
+	If val2 < val1 Then cpu.reg(rt).r0 = 1 Else cpu.reg(rt).r0 = 0
 End Sub
 Sub ee_SLTIU()
 
@@ -654,7 +667,10 @@ Sub ee_SUBU()
 
 End Sub
 Sub ee_SW()
-
+	Dim addr As ULong
+	addr = CShort(imm) + cpu.reg(rs).r0
+	write32(addr,cpu.reg(rt).r0)
+	Print "WRITING RAM!!!!"
 End Sub
 Sub ee_SWL()
 
@@ -663,7 +679,7 @@ Sub ee_SWR()
 
 End Sub
 Sub ee_SYNC()
-
+	Print "SYNC"
 End Sub
 Sub ee_SYSCALL()
 
@@ -1134,7 +1150,7 @@ Sub cop0_MFBPC()
 End Sub
 Sub cop0_MFC0()
 	Print "MFC0"
-	cpu.reg(rt).double0 = cop0Regs.regs(rd)
+	cpu.reg(rt).r0 = Cop0Regs.reg(rd)
 End Sub
 Sub cop0_MFDAB()
 
@@ -1164,7 +1180,7 @@ Sub cop0_MTBPC()
 
 End Sub
 Sub cop0_MTC0()
-
+	Cop0Regs.reg(rd) =  cpu.reg(rt).int0
 End Sub
 Sub cop0_MTDAB()
 
@@ -1341,6 +1357,7 @@ Sub MMI3()
 
 End Sub
 Sub DecodeOp()
+	Print Hex(cpu.PC)
 	tbl_NORMAL(cpu.opcode Shr 26)()
 End sub
 

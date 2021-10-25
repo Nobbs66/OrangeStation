@@ -1,7 +1,7 @@
 Type cop0Regs
 	Union 
 		Type
-			regs(0 To 31) As ULong
+			reg(0 To 31) As ULong
 		End Type
 		Type
 			index As ULong		'0
@@ -42,6 +42,5 @@ End Type
 Dim Shared cop0Regs As cop0Regs
 
 Sub initCop0()
-	'cop0Regs.prId = &h00002e20
-	Print Hex(cop0Regs.regs(15))
+	cop0Regs.prId = &h00002e20
 End Sub
