@@ -5,9 +5,9 @@ Using fb
 
 #Include "types.bi"
 #Include "bus.bi"
-
+#Include "cop0.bi"
 #Include "ee.bi"
-'#Include "ee_instructions.bi"
+
 
 ScreenRes(640,480,32)
 Declare Sub loadBIOS
@@ -23,12 +23,8 @@ Sub loadBIOS()
 	close #1
 
 End Sub
-
-
 loadBIOS()
-
 init_EE()
 run_EE()
-Print "DOing stuff"
-Sleep
-sleep
+Print "Exiting"
+Sleep(2000)

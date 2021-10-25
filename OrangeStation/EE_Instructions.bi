@@ -1,3 +1,7 @@
+#Define rs ((cpu.Opcode Shr 21) And &h1F)
+#Define rt ((cpu.Opcode Shr 16) And &h1F)
+#Define rd ((cpu.Opcode Shr 11) And &h1F)
+#Define imm cpu.opcode And &hFFFF
 Declare Sub ee_ADD()
 Declare Sub ee_ADDI()
 Declare Sub ee_ADDIU()
@@ -444,6 +448,13 @@ Sub ee_BLTZL()
 End Sub
 Sub ee_BNE()
 	Print "BNE"
+	If cpu.reg(rs).double0 <> cpu.reg(rt).double0 Then
+		Dim As Integer temp = Cast(Long, imm)
+		temp Shl= 2
+		cpu.branchPC = cpu.PC + temp + 4
+		cpu.PC += 4
+		doBranch()
+	EndIf
 End Sub
 Sub ee_BNEL()
 
@@ -602,7 +613,7 @@ Sub ee_SH()
 
 End Sub
 Sub ee_SLL()
-
+	If cpu.Opcode = 0 Then Print "NOP"
 End Sub
 Sub ee_SLLV()
 
@@ -612,6 +623,11 @@ Sub ee_SLT()
 End Sub
 Sub ee_SLTI()
 	Print "SLTI"
+	Dim val1 As ULongInt
+	Dim val2 As ULongInt
+	val1 = Cast(LongInt,imm)
+	val2 = Cast(LongInt,cpu.reg(rs).double0)
+	If val2 < val1 Then cpu.reg(rt).double0 = 1 Else cpu.reg(rt).double0 = 0
 End Sub
 Sub ee_SLTIU()
 
@@ -1117,7 +1133,8 @@ Sub cop0_MFBPC()
 
 End Sub
 Sub cop0_MFC0()
-	Print "Move from COP0" 
+	Print "MFC0"
+	cpu.reg(rt).double0 = cop0Regs.regs(rd)
 End Sub
 Sub cop0_MFDAB()
 
@@ -1188,7 +1205,6 @@ End Sub
 Sub cop0_DEFAULT()
 
 End Sub
-
 Sub cop1_ABSS()
 
 End Sub
