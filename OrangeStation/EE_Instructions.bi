@@ -1,7 +1,9 @@
 #Define rs ((cpu.Opcode Shr 21) And &h1F)
 #Define rt ((cpu.Opcode Shr 16) And &h1F)
 #Define rd ((cpu.Opcode Shr 11) And &h1F)
+#Define sa ((cpu.Opcode Shr 6) And &h1F)
 #Define imm (cpu.opcode And &hFFFF)
+#Define Target ((cpu.opcode And &h3FFFFFF) Shl 2)
 Declare Sub ee_ADD()
 Declare Sub ee_ADDI()
 Declare Sub ee_ADDIU()
@@ -347,9 +349,14 @@ Dim Shared tbl_SPECIAL(0 To 63) As Sub() => _
 	@ee_TGE, 	@ee_TGEU, 	 @ee_TLT,  @ee_TLTU, @ee_TEQ, 	 @ee_DEFAULT, 	@ee_TNE, 		@ee_DEFAULT, 	_
 	@ee_DSLL, 	@ee_DEFAULT, @ee_DSRL, @ee_DSRA, @ee_DSLL32,  @ee_DEFAULT, 	@ee_DSRL32, 	@ee_DSRA32 		_
 }
-/'
-Dim Shared REGIMM(0 To 31) As Sub() => _
 
+Dim Shared tbl_REGIMM(0 To 31) As Sub() => _
+{	@ee_BLTZ, 	@ee_BGEZ, 	@ee_BLTZL,	 @ee_BGEZL,	  @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, _
+	@ee_TGEI, 	@ee_TGEIU, 	@ee_TLTI,	 @ee_TLTIU,	  @ee_TEQI, 	@ee_DEFAULT, @ee_TNEI,	  @ee_DEFAULT, _
+	@ee_BLTZAL, @ee_BGEZAL, @ee_BLTZALL, @ee_BGEZALL, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, _
+	@mmi_MTSAB, @mmi_MTSAH, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT, @ee_DEFAULT  _
+}
+/'
 Dim Shared MMI(0 To 63) As Sub() => _
 
 Dim Shared MMI0(0 To 31) As Sub() => _
@@ -387,255 +394,367 @@ Sub TLB()
 	
 End Sub
 Sub ee_ADD()
-
+		Print "TODO: ADD"
 End Sub
 Sub ee_ADDI()
-
+	Print "TODO: ADDI"
 End Sub
 Sub ee_ADDIU()
-	cpu.reg(rt).r0 = cpu.reg(rs).r0 + Cast(LongInt,imm)
-	Print Hex(imm)
-	Print Hex(cpu.reg(rt).r0)
+	Print "ADDIU"
+	cpu.reg(rt).r0 = cpu.reg(rs).r0 + CShort(imm)
 End Sub
 Sub ee_ADDU()
-
+	Print "TODO: ADDU"
 End Sub
 Sub ee_AND()
-
+	Print "TODO: AND"
 End Sub
 Sub ee_ANDI()
-
+	Print "ANDI"
+	Print #99, "ANDI"
+	cpu.reg(rt).r0 = cpu.reg(rs).r0 And imm
 End Sub
 Sub ee_BEQ()
-
-End Sub
-Sub ee_BEQL()
-
-End Sub
-Sub ee_BGEZ()
-
-End Sub
-Sub ee_BGEZAL()
-
-End Sub
-Sub ee_BGEZALL()
-
-End Sub
-Sub ee_BGEZL()
-
-End Sub
-Sub ee_BGTZ()
-
-End Sub
-Sub ee_BGTZL()
-
-End Sub
-Sub ee_BLEZ()
-
-End Sub
-Sub ee_BLEZL()
-
-End Sub
-Sub ee_BLTZ()
-
-End Sub
-Sub ee_BLTZAL()
-
-End Sub
-Sub ee_BLTZALL()
-
-End Sub
-Sub ee_BLTZL()
-
-End Sub
-Sub ee_BNE()
-	Print "BNE"
-	If cpu.reg(rs).r0 <> cpu.reg(rt).r0 Then
-		Dim As Integer temp = Cast(Long, imm)
+	Print "BEQ" 
+	Print #99, "BEQ"
+	If cpu.reg(rs).r0 = cpu.reg(rt).r0 Then
+		Dim As Integer temp = CShort(imm)
 		temp Shl= 2
 		cpu.branchPC = cpu.PC + temp + 4
 		cpu.branchPending = 1
-		'cpu.PC += 4
-		'doBranch()
+	EndIf
+End Sub
+Sub ee_BEQL()
+	Print "TODO: BEQL" 
+	If cpu.reg(rs).r0 = cpu.reg(rt).r0 Then
+		Dim As Integer temp = CShort(imm)
+		temp Shl= 2
+		cpu.branchPC = cpu.PC + temp + 4
+		cpu.branchPending = 1
+	Else
+		cpu.PC += 4
+	EndIf
+End Sub
+Sub ee_BGEZ()
+	Print #99, "BGEZ"
+	If (cpu.reg(rs).r0 Shr 63) = 0 Then
+		cpu.branchPC = CShort(imm Shl 2) + 4 + cpu.PC
+		cpu.branchPending = 1
+	EndIf	
+End Sub
+Sub ee_BGEZAL()
+	Print "TODO: BGEZAL"
+End Sub
+Sub ee_BGEZALL()
+	Print "TODO: BGEZALL"
+End Sub
+Sub ee_BGEZL()
+	Print "TODO: BGEZL"
+End Sub
+Sub ee_BGTZ()
+	Print "TODO: BGTZ"
+End Sub
+Sub ee_BGTZL()
+	Print "TODO: BGTZL"
+End Sub
+Sub ee_BLEZ()
+	Print "TODO: BLEZ"
+End Sub
+Sub ee_BLEZL()
+	Print "TODO: BLEZL"
+End Sub
+Sub ee_BLTZ()
+	Print "TODO: BLTZ"
+End Sub
+Sub ee_BLTZAL()
+	Print "TODO: BLTZAL"
+End Sub
+Sub ee_BLTZALL()
+	Print "TODO: BLTZALL"
+End Sub
+Sub ee_BLTZL()
+	Print "TODO: BLTZL"
+End Sub
+Sub ee_BNE()
+	Print "BNE"
+	Print #99, "BNE"
+	If cpu.reg(rs).r0 <> cpu.reg(rt).r0 Then
+		Print CShort(imm)
+		Print Hex(cpu.pc)
+		Dim As Integer temp = CShort(imm)
+		temp Shl= 2
+		cpu.branchPC = cpu.PC + temp + 4
+		cpu.branchPending = 1
 	EndIf
 End Sub
 Sub ee_BNEL()
-
+	Print "TODO: BNEL"
 End Sub
 Sub ee_BREAK()
-
+	Print "TODO: BREAK"
 End Sub
 Sub ee_DADD()
-
+	Print "TODO: DADD"
 End Sub
 Sub ee_DADDI()
-
+	Print "TODO: DADDI"
 End Sub
 Sub ee_DADDIU()
-
+	Print "TODO: DADDIU"
 End Sub
 Sub ee_DADDU()
-
+	Print "DADDU"
+	Print #99, "DADDU"
+	cpu.reg(rd).r0 = cpu.reg(rt).r0 + cpu.reg(rs).r0
 End Sub
 Sub ee_DIV()
-
+	Print "TODO: DIV"
 End Sub
 Sub ee_DIVU()
-
+	Print "TODO: DIVU"
 End Sub
 Sub ee_DSLL()
-
+	Print "DSLL"
+	Print #99, "DSLL"
+	cpu.reg(rd).r0 Shl= sa
 End Sub
 Sub ee_DSLL32()
-
+	Print "TODO: DSLL32"
 End Sub
 Sub ee_DSLLV()
-
+	Print "TODO: DSLLV"
 End Sub
 Sub ee_DSRA()
-
+	Print "TODO: DSRA"
 End Sub
 Sub ee_DSRA32()
-
+	Print "TODO: DSRA32"
 End Sub
 Sub ee_DSRAV()
-
+	Print "TODO: DSRAV"
 End Sub
 Sub ee_DSRL()
-
+	Print "TODO: DSRL"
 End Sub
 Sub ee_DSRL32()
-
+	Print "TODO: DSRL32"
 End Sub
 Sub ee_DSRLV()
-
+	Print "TODO: DSRLV"
 End Sub
 Sub ee_DSUB()
-
+	Print "TODO: DSUB"
 End Sub
 Sub ee_DSUBU()
-
+	Print "TODO: DSUBU"
 End Sub
 Sub ee_J()
-
+	Print "JUMP"
+	cpu.branchPending = 1
+	cpu.branchPC = cpu.PC And &hF0000000
+	cpu.branchPC Or= Target
 End Sub
 Sub ee_JAL()
-
+	Print "JAL"
+	Print #99, "JAL"
+	cpu.reg(31).r0 = cpu.pc + 8
+	cpu.branchPending = 1
+	cpu.branchPC = cpu.PC And &hF0000000
+	cpu.branchPC Or= Target
 End Sub
 Sub ee_JALR()
-
+	Print "JALR"
+	Print #99, "JALR"
+	cpu.reg(31).r0 = cpu.pc + 8
+	cpu.branchPending = 1
+	cpu.branchPC = cpu.reg(rs).r0
 End Sub
 Sub ee_JR()
 	Print "JR"
+	Print #99, "JR"
 	cpu.branchPending = 1
 	cpu.branchPC = cpu.reg(rs).r0
-	Print Hex(cpu.branchPC)
-	
-	'doBranch()
+	Print #99, "Branch PC: " & Hex(cpu.branchPC)
 End Sub
 Sub ee_LB()
-
+	Print #99, "LB"
+	Dim addr As UInteger 
+	addr = cpu.reg(rs).r0 + CShort(imm)
+	Dim value As ULongInt = CByte(read8(addr))
+	cpu.reg(rt).r0 = value
 End Sub
 Sub ee_LBU()
-
+	Print "LBU"
+	Print #99, "LBU"
+	Dim addr As UInteger 
+	addr = cpu.reg(rs).r0 + CShort(imm)
+	Dim value As ULongInt = read8(addr)
+	cpu.reg(rt).r0 = value
 End Sub
 Sub ee_LD()
-
+	Print "LD"
+	Print #99, "LD"
+	Dim addr As UInteger 
+	addr = cpu.reg(rs).r0 + CShort(imm)
+	Dim value As ULongInt = read64(addr)
+	cpu.reg(rt).r0 = value
+	Print #99, "RT: " & rt
+	Print #99, "Addr: " & Hex(addr)
+	Print #99, "Value: " & Hex(value)
 End Sub
 Sub ee_LDL()
-
+	Print #99, "TODO: LBL"
+	Print "TODO: LDL"
 End Sub
 Sub ee_LDR()
-
+	Print #99, "TODO: LDR"
+	Print "TODO: LDR"
 End Sub
 Sub ee_LH()
-
+	Print "LH"
+	Print #99, "LH"
+	Dim addr As UInteger 
+	addr = cpu.reg(rs).r0 + CShort(imm)
+	Dim value As ULongInt = CShort(read16(addr))
+	cpu.reg(rt).r0 = value
 End Sub
 Sub ee_LHU()
-
+	Print "LHU"
+	Print #99, "LHU"
+	Dim addr As UInteger 
+	addr = cpu.reg(rs).r0 + CShort(imm)
+	Dim value As ULongInt = read16(addr)
+	cpu.reg(rt).r0 = value
 End Sub
 Sub ee_LUI()
 	Print "LUI"
+	Print #99, "LUI"
 	Dim temp As LongInt
 	temp = imm
 	temp Shl= 16
 	cpu.Reg(rt).r0 = temp
 End Sub
 Sub ee_LW()
-
+	cls
+	Print "LW" 
+	Print #99, "LW"
+	Dim addr As UInteger 
+	addr = cpu.reg(rs).r0 + CShort(imm)
+	Dim value As ULongInt = read32(addr)
+	Print "REG: " & rt & " value: " & Hex(value)
+	cpu.reg(rt).r0 = value
 End Sub
 Sub ee_LWL()
-
+	Print #99, "TODO: LWL"
+	Print "TODO: LWL"
 End Sub
 Sub ee_LWR()
-
+	Print #99, "LWR"
+	Print "TODO: LWR"
 End Sub
 Sub ee_LWU()
-
+	Print #99, "TODO: LWU"
+	Print "TODO: LWU"
 End Sub
 Sub ee_MFHI()
-
+	Print #99, "TODO: MFHI"
+	Print "TODO: MFHI"
 End Sub
 Sub ee_MFLO()
-
+	Print #99, "TODO: MFLO"
+	Print "TODO: MFLO"
 End Sub
 Sub ee_MOVN()
-
+	Print #99, "TODO: MOVN"
+	Print "TODO: MOVN"
 End Sub
 Sub ee_MOVZ()
-
+	Print #99, "TODO: MOVZ"
+	Print "TODO: MOVZ"
 End Sub
 Sub ee_MTHI()
-
+	Print #99, "TODO: MTHI"
+	Print "TODO: MTHI"
 End Sub
 Sub ee_MTLO()
-
+	Print #99, "TODO: MTLO"
+	Print "TODO: MTLO"
 End Sub
 Sub ee_MULT()
-
+	Print #99, "TODO: MULT"
+	Print "TODO: MULT"
 End Sub
 Sub ee_MULTU()
-
+	Print #99, "TODO: MULTU"
+	Print "TODO: MULTU"
 End Sub
 Sub ee_NOR()
-
+	Print #99, "TODO: NOR"
+	Print "TODO: NOR"
 End Sub
 Sub ee_OR()
-
+	Print "OR"
+	Print #99, "OR"
+	cpu.reg(rd).r0 = cpu.reg(rs).r0 Or cpu.reg(rt).r0
 End Sub
 Sub ee_ORI()
 	Print "ORI"
+	Print #99, "ORI"
 	cpu.reg(rt).r0 = cpu.reg(rs).r0 Or imm
 End Sub
 Sub ee_PREF()
-
+	Print #99, "TODO: PREF" 
+	Print "TODO: PREF"
 End Sub
 Sub ee_SB()
-
+	Print #99, "SB"
+	Print "SB"
+	Dim addr As ULong
+	Dim value As UByte
+	addr = CShort(imm) + cpu.reg(rs).r0 
+	value = cpu.reg(rt).r0 And &hFF
+	write8(addr, value)
 End Sub
 Sub ee_SD()
-
+	Print "SD"
+	Print #99, "SD"
+	Dim addr As ULong
+	addr = CShort(imm) + cpu.reg(rs).r0
+	write64(addr,cpu.reg(rt).r0)
 End Sub
 Sub ee_SDL()
-
+	Print #99, "TODO: SDL"
+	Print "TODO: SDL"
 End Sub
 Sub ee_SDR()
-
+	Print #99, "TODO: SDR"
+	Print "TODO: SDR"
 End Sub
 Sub ee_SH()
-
+	Print "SH"
+	Print #99, "SH"
+	Dim addr As ULong
+	Dim value As UShort
+	addr = CShort(imm) + cpu.reg(rs).r0
+	value = cpu.reg(rt).r0 And &hFFFF
+	write16(addr,value)
 End Sub
 Sub ee_SLL()
-	If cpu.Opcode = 0 Then Print "NOP"
+	Print "SLL"
+	Print #99, "SLL"
+	cpu.reg(rd).r0 = cpu.reg(rt).r0 Shl sa
 End Sub
 Sub ee_SLLV()
-
+	Print #99, "TODO: SLLV"
+	Print "TODO: SLLV"
 End Sub
 Sub ee_SLT()
-
+	Print #99, "TODO: SLT"
+	Print "TODO: SLT"
 End Sub
 Sub ee_SLTI()
 	Print "SLTI"
+	Print #99, "SLTI"
 	Dim val1 As ULongInt
 	Dim val2 As ULongInt
 	val1 = Cast(LongInt,imm)
@@ -643,91 +762,105 @@ Sub ee_SLTI()
 	If val2 < val1 Then cpu.reg(rt).r0 = 1 Else cpu.reg(rt).r0 = 0
 End Sub
 Sub ee_SLTIU()
-
+	Print #99, "TODO: SLTIU"
+	Print "TODO: SLTIU"
 End Sub
-Sub ee_SLTU()
-
+Sub ee_SLTU() 
+	Print #99, "TODO: SLTU"
+	Print "TODO: SLTU"
 End Sub
 Sub ee_SRA()
-
+	Print "SRA"
+	Print #99, "SRA"
+	cpu.reg(rd).r0 = cpu.reg(rt).r0 shr sa
 End Sub
 Sub ee_SRAV()
-
+	Print #99, "TODO: SRAV"
+	Print "TODO: SRAV"
 End Sub
 Sub ee_SRL()
-
+	Print #99, "TODO: SRL"
+	Print "TODO: SRL"
 End Sub
 Sub ee_SRLV()
-
+	Print #99, "TODO: SRLV"
+	Print "TODO: SRVL"
 End Sub
 Sub ee_SUB()
-
+	Print #99, "TODO: SUB"
+	Print "TODO: SUB"
 End Sub
 Sub ee_SUBU()
-
+	Print #99, "SUBU"
+	Print "SUBU"
 End Sub
 Sub ee_SW()
+	Print "SW"
+	Print #99, "SW"
 	Dim addr As ULong
 	addr = CShort(imm) + cpu.reg(rs).r0
 	write32(addr,cpu.reg(rt).r0)
-	Print "WRITING RAM!!!!"
 End Sub
 Sub ee_SWL()
-
+	Print #99, "TODO: SWL"
+	Print "TODO: SWL"
 End Sub
 Sub ee_SWR()
-
+	Print #99, "TODO: SWR"
+	Print "TODO: SWR"
 End Sub
 Sub ee_SYNC()
 	Print "SYNC"
 End Sub
 Sub ee_SYSCALL()
-
+	Print #99, "SYSCALL"
+	Print "SYSCALLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
 End Sub
 Sub ee_TEQ()
-
+	Print "TODO: TEQ"
 End Sub
 Sub ee_TEQI()
-
+	Print "TODO: TEQI"
 End Sub
 Sub ee_TGE()
-
+	Print "TODO: TGE"
 End Sub
 Sub ee_TGEI()
-
+	Print "TODO: TGEI"
 End Sub
 Sub ee_TGEIU()
-
+	Print "TODO: TGEIU"
 End Sub
 Sub ee_TGEU()
-
+	Print "TODO: TGEU"
 End Sub
 Sub ee_TLT()
-
+	Print "TODO: TLT"
 End Sub
 Sub ee_TLTI()
-
+	Print "TODO: TLTI"
 End Sub
 Sub ee_TLTIU()
-
+	Print "TODO: TLTIU"
 End Sub
 Sub ee_TLTU()
-
+	Print "TODO: TLTU"
 End Sub
 Sub ee_TNE()
-
+	Print "TODO: TNE"
 End Sub
 Sub ee_TNEI()
-
+	Print "TODO: TNEI"
 End Sub
 Sub ee_XOR()
-
+	Print "TODO: XOR"
 End Sub
 Sub ee_XORI()
-
+	Print "TODO: XORI"
 End Sub
 Sub ee_DEFAULT()
-
+	Print "INVALID OPCODE"
+	sleep
 End Sub
 
 Sub mmi_DIV1()
@@ -1150,6 +1283,7 @@ Sub cop0_MFBPC()
 End Sub
 Sub cop0_MFC0()
 	Print "MFC0"
+	Print #99, "MFC0: " & rd
 	cpu.reg(rt).r0 = Cop0Regs.reg(rd)
 End Sub
 Sub cop0_MFDAB()
@@ -1180,6 +1314,8 @@ Sub cop0_MTBPC()
 
 End Sub
 Sub cop0_MTC0()
+	Print #99, "MTC0: " & rd
+	Print "Move to CoProcessor 0 " & rd
 	Cop0Regs.reg(rd) =  cpu.reg(rt).int0
 End Sub
 Sub cop0_MTDAB()
@@ -1330,7 +1466,7 @@ Sub SPECIAL()
 	tbl_SPECIAL(cpu.opcode And &h3F)()
 End Sub
 Sub REGIMM()
-
+	tbl_REGIMM(rt)()
 End Sub
 Sub COP0()
 	tbl_COP0((cpu.opcode Shr 21) And &h1F)()
@@ -1357,7 +1493,11 @@ Sub MMI3()
 
 End Sub
 Sub DecodeOp()
-	Print Hex(cpu.PC)
 	tbl_NORMAL(cpu.opcode Shr 26)()
+			Print #99, "RA: " & Hex(cpu.reg(31).r0)
+	Print #99, Hex(cpu.PC) & " : " & Hex(cpu.opcode)
+	'Print "Link Register: " & Hex(cpu.reg(29).r0)
+	'Print #99, ""
+	
 End sub
 

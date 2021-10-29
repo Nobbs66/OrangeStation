@@ -1,6 +1,6 @@
 Declare Sub fetchOP()
 Declare Sub doBranch()
-
+Dim Shared stepping As UByte
 Type cpus
 	Dim PC As ULong 
 	Dim reg(0 To 31) As uint128
@@ -12,13 +12,30 @@ Type cpus
 	Dim branchPC As ULong
 	Dim branchPending As UByte
 End Type
-
+Type timers
+	TN_Mode As ULong
+	TN_Count As ULong
+	TN_Comp As ULong
+	TN_Hold As ULong
+	Enum mode
+		clock = 0
+		gateEnable = 2
+		gateType = 3
+		gateMode = 4
+		countClear = 6
+		timeEnable = 7
+		compInt = 8
+		ovfInt = 9
+		clearComp = 10
+		clearOvf = 11
+	End Enum
+End Type
 Dim Shared cpu As cpus
-
+Dim Shared cpuTimer(0 To 3) As timers
 #Include "ee_instructions.bi"
+
 Sub fetchOp()
 	 cpu.Opcode = read32(cpu.PC)
-	 'Print Hex(cpu.Opcode)
 End Sub
 Sub init_EE()
 	initCop0
@@ -28,6 +45,9 @@ Sub doBranch()
 	fetchOp()
 	DecodeOp()
 	cpu.PC = cpu.branchPC
+End Sub
+Sub runTimers()
+	
 End Sub
 Sub run_EE()
 	Do
@@ -41,8 +61,14 @@ Sub run_EE()
 		EndIf
 		fetchOp()
 		decodeOp()
+
 		cpu.PC += 4
-		Sleep
+		run_COP0()
+		tickTimer()
+		If MultiKey(SC_SPACE) Then stepping = 1
+		If MultiKey(SC_BACKSPACE) Then stepping = 0
+		If stepping = 1 Then Sleep
+		
 	Loop While Not MultiKey(SC_ESCAPE)
 	Sleep(10000)
 End Sub

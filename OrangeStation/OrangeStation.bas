@@ -2,14 +2,18 @@
 Using fb
 #Include "crt.bi"
 #Include "file.bi"
+Open "log0.txt" For Output As #99
+
 
 #Include "types.bi"
-#Include "bus.bi"
-#Include "cop0.bi"
-#Include "ee.bi"
+
+#Include Once "bus.bi"
+#Include Once "cop0.bi"
+#Include Once "ee.bi"
 
 
-ScreenRes(640,480,32)
+
+ScreenRes(640,900,32)
 Declare Sub loadBIOS
 Sub loadBIOS()
 	Dim regs(0 To 31) As uint128
@@ -23,8 +27,23 @@ Sub loadBIOS()
 	close #1
 
 End Sub
-loadBIOS()
-init_EE()
-run_EE()
-Print "Exiting"
-Sleep(2000)
+Sub waitForStart()
+	Do
+		Cls 
+		Print "press s"
+		Sleep 1000	
+	Loop Until MultiKey(SC_S)
+End Sub
+Sub main()
+	waitForStart()
+	loadBIOS()
+	init_EE()
+	run_EE()
+
+	Print "Exiting"
+	cls
+	Sleep(2000)
+End Sub
+
+
+main()

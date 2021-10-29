@@ -43,4 +43,8 @@ Dim Shared cop0Regs As cop0Regs
 
 Sub initCop0()
 	cop0Regs.prId = &h00002e20
+	cop0Regs.count = 0
+End Sub
+Sub run_COP0()
+	cop0Regs.count += 1
 End Sub
