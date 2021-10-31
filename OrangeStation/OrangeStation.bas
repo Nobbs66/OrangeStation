@@ -2,6 +2,7 @@
 Using fb
 #Include "crt.bi"
 #Include "file.bi"
+Open "tty.txt" For Output As #88
 Open "log0.txt" For Output As #99
 
 

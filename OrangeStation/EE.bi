@@ -1,6 +1,7 @@
 Declare Sub fetchOP()
 Declare Sub doBranch()
 Dim Shared stepping As UByte
+
 Type cpus
 	Dim PC As ULong 
 	Dim reg(0 To 31) As uint128
@@ -40,6 +41,7 @@ End Sub
 Sub init_EE()
 	initCop0
 	cpu.PC = &hBFC00000
+	stepping = 0
 End Sub
 Sub doBranch()
 	fetchOp()
@@ -61,7 +63,6 @@ Sub run_EE()
 		EndIf
 		fetchOp()
 		decodeOp()
-
 		cpu.PC += 4
 		run_COP0()
 		tickTimer()

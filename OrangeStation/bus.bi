@@ -3,9 +3,15 @@ Type Buss
 	rdram(&h7FFFFFF)  As UByte
 	bios(&h400000) As UByte
 	scratch(&h2000) As UByte
+	mch_drd As ULong
+	rdram_sdevid As ULong
+	mch_ricm As ULong
+	
 	Declare Function read32(addr As UInteger) As UInteger
+	
 End Type
 Dim Shared Bus As Buss
+Declare Sub writeRDRAM(value As ULong, addr As ULong)
 Function read8(addr As ULong) As UByte
 	Dim value As UByte
 	If addr >= &h70000000 And addr < &h70004000 Then 
@@ -18,8 +24,8 @@ Function read8(addr As ULong) As UByte
 			Case &h1FC00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h3FFFFF), 1)
 			Case &h10000000 To &h10FFFFFF
-				Print "Read8 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Read8 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 				If (addr >= &h10000000 And addr < &h10001830) Then 
 					value = read8Timer(addr)
 				EndIf
@@ -53,8 +59,8 @@ Function read16(addr As ULong) As Ushort
 			Case &h1FC00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h3FFFFF), 2)
 			Case &h10000000 To &h10FFFFFF
-				Print "Read16 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Read16 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 				If (addr >= &h10000000 And addr < &h10001830) Then 
 					value = read16Timer(addr)
 				EndIf
@@ -88,8 +94,8 @@ Function read32(addr As ULong) As Ulong
 			Case &h1FC00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h3FFFFF), 4)
 			Case &h10000000 To &h10FFFFFF
-				Print "Read32 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Read32 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 				If (addr >= &h10000000 And addr < &h10001830) Then 
 					value = read32Timer(addr)
 				EndIf
@@ -124,8 +130,8 @@ Function read64(addr As ULong) As ULongInt
 			Case &h1FC00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h3FFFFF), 8)
 			Case &h10000000 To &h10FFFFFF
-				Print "Write8 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Write8 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 			Case &h11000000 To &h11003FFF
 				Print "Read64 from VU0 Code Memory"
 			Case &h11004000 To &h11007FFF
@@ -153,11 +159,12 @@ Sub write8(addr As ULong, value As UByte)
 			Case 0 To &h1FFFFFF
 				memcpy(@bus.rdram(addr And &h1FFFFFF), @value, 1)
 			Case &h10000000 To &h10FFFFFF
-				Print "Write8 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Write8 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 				If (addr >= &h10000000 And addr < &h10001830) Then 
 					write8Timer(addr, value)
 				EndIf
+				If (addr = &h1000F180) Then Print #88, Chr(value)
 			Case &h11000000 To &h11003FFF
 				Print "Write8 to VU0 Code Memory"
 			Case &h11004000 To &h11007FFF
@@ -183,11 +190,12 @@ Sub write16(addr As ULong, value As UShort)
 			Case 0 To &h1FFFFFF
 				memcpy(@bus.rdram(addr And &h1FFFFFF), @value, 2)
 			Case &h10000000 To &h10FFFFFF
-				Print "Write16 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Write16 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 				If (addr >= &h10000000 And addr < &h10001830) Then 
 					write16Timer(addr, value)
 				EndIf
+				If (addr = &h1000F180) Then Print #88, Chr(value)
 			Case &h11000000 To &h11003FFF
 				Print "Write16 to VU0 Code Memory"
 			Case &h11004000 To &h11007FFF
@@ -212,11 +220,13 @@ Sub write32(addr As ULong, value As Ulong)
 			Case 0 To &h1FFFFFF
 				memcpy(@bus.rdram(addr And &h1FFFFFF), @value, 4)
 			Case &h10000000 To &h10FFFFFF
-				Print "Write32 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
-				Print "I/O Value: " & Hex(value)
+				Print #99, "Write32 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "I/O Value: " & Hex(value)
 				If (addr >= &h10000000 And addr < &h10001830) Then 
 					write32Timer(addr, value)
 				EndIf
+				If (addr = &h1000F180) Then Print #88, Chr(value)
+				If (addr = &h1000F430 Or addr = &h1000F440) Then writeRDRAM(value, addr)
 			Case &h11000000 To &h11003FFF
 				Print "Write32 to VU0 Code Memory"
 			Case &h11004000 To &h11007FFF
@@ -242,7 +252,7 @@ Sub write64(addr As ULong, value As ULongInt)
 			Case 0 To &h1FFFFFF
 				memcpy(@bus.rdram(addr And &h1FFFFFF), @value, 8)
 			Case &h10000000 To &h10FFFFFF
-				Print "Write64 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
+				Print #99, "Write64 to I/O Reg at 0x" & Hex(addr And &h1FFFFFFF)
 			Case &h11000000 To &h11003FFF
 				Print "Write64 to VU0 Code Memory"
 			Case &h11004000 To &h11007FFF
@@ -286,3 +296,36 @@ sub write128(addr As ULong, value0 As ULongInt, value1 As ULongInt)
 		End Select
 	EndIf
 End Sub
+
+Sub writeRDRAM(value As ULong, addr As ULong)
+	Select Case addr And &hFFFF
+		Case &hf430
+			Dim cmd As UShort = ((value Shr 16) And &hFF)
+			Dim subCMD As UByte = ((value Shr 6) And &hF)
+			Dim temp As UByte
+			If ((bus.mch_drd shr 7) And 1) = 1  Then temp = 0 Else temp = 1
+			Select Case cmd
+				Case &h21
+					Print #99, "RDRAM INIT"
+					If subCMD = 1 And temp = 1 Then bus.rdram_sdevid = 0 
+			End Select
+		Case &hf440
+			bus.mch_drd = value
+	End Select
+End Sub
+Function readRDRAM(addr As ULong) As ULong
+	Dim cmd As UShort = (bus.mch_ricm Shr 16) And &hFFF
+	Dim subCMD As UByte = (bus.mch_ricm Shr 6) And &hF
+	Dim lsb5 As UByte = bus.mch_ricm And &h1F
+	If subCMD = 0 Then 
+		Select Case cmd
+			Case &h21
+				If bus.rdram_sdevid < 2 Then 
+					bus.rdram_sdevid += 1
+					Return &h1F
+				EndIf
+			Case &h40
+				Return lsb5
+		End Select
+	EndIf
+End Function

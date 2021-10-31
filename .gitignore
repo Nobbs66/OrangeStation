@@ -4,3 +4,4 @@ OrangeStation/bios/scph39001.NVM
 OrangeStation/bios/scph39001.MEC
 OrangeStation/bios/bios.bin
 *.txt
+*.bin
