@@ -26,7 +26,6 @@ Sub loadBIOS()
 	EndIf
 	Get #1,, bus.bios()
 	close #1
-
 End Sub
 Sub waitForStart()
 	Do
@@ -40,11 +39,9 @@ Sub main()
 	loadBIOS()
 	init_EE()
 	run_EE()
-
 	Print "Exiting"
 	cls
 	Sleep(2000)
 End Sub
-
 
 main()

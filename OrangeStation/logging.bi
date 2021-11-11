@@ -356,7 +356,7 @@ Dim Shared log_cp0log(0 To 31) As Sub() => _
 	@logs_TLB, 		 @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, _
 	@log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT, @log_DEFAULT  _
 }
-Dim Shared As String * 2 log_regs(0 To 31) = _
+Dim Shared As String * 4 log_regs(0 To 31) = _
 {"zero", "at", "v0", "v1", _
 "a0", "a1", "a2", "a3", _
 "t0", "t1", "t2", "t3", _
@@ -370,322 +370,324 @@ Sub logs_BC0()
 	
 End Sub
 Sub logs_TLB()
-	
+
 End Sub
 Sub log_ADD()
-	Print #11, "ADD " & log_regs(rd)& "," & log_regs(rs) & "," & log_regs(rt)
+	Print #11, hex(cpu.PC) & ": " & "ADD " & log_regs(rd)& "(0x" & Hex(cpu.reg(rd).r0) & ")," & log_regs(rs) & Hex(cpu.reg(rd).r0) & ")," & log_regs(rt) & Hex(cpu.reg(rd).r0) & ")" 
 End Sub
 Sub log_ADDI()
-	Print #11, "ADDI " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
+	Print #11, hex(cpu.pc) & ": " & "ADDI " & log_regs(rt) &  "(0x" & Hex(cpu.reg(rd).r0) & ")," & log_regs(rs) & "," & CShort(imm)
 End Sub
 Sub log_ADDIU()
-	Print #11, "ADDIU " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
+	Print #11, hex(cpu.pc) & ": " & "ADDIU " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
 End Sub
 Sub log_ADDU()
-	Print #11, "ADDU " & log_regs(rd)& "," & log_regs(rs) & "," & log_regs(rt)
+	Print #11, hex(cpu.pc) & ": " & "ADDU " & log_regs(rd)& "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_AND()
-	Print #11, "AND " & log_regs(rd)& "," & log_regs(rs) & "," & log_regs(rt)
+	Print #11, hex(cpu.pc) & ": " & "AND " & log_regs(rd)& "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_ANDI()
-	Print #11, "ANDI " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
+	Print #11, hex(cpu.pc) & ": " & "ANDI " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
 End Sub
 Sub log_BEQ()
-	Print #11, "BEQ " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BEQ " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_BEQL()
-	Print #11, "BEQL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BEQL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_BGEZ()
-	Print #11, "BGEZ " & log_regs(rs) & "," & (CShort(imm)Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BGEZ " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_BGEZAL()
-	Print #11, "BGEZAL " & log_regs(rs) & "," & (CShort(imm)Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BGEZAL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_BGEZALL()
-	Print #11, "BGEZALL " & log_regs(rs) & "," & (CShort(imm)Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BGEZALL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_BGEZL()
-	Print #11, "BGEZL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BGEZL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BGTZ()
-	Print #11, "BGTZ " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BGTZ " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BGTZL()
-	Print #11, "BGTZL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BGTZL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BLEZ()
-	Print #11, "BLEZZ " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BLEZZ " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BLEZL()
-	Print #11, "BLEZL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BLEZL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BLTZ()
-	Print #11, "BLTZ " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BLTZ " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
+	Print #11, Hex(cpu.reg(rs).s0) & " : " & Hex(cpu.reg(rt).s0)
 End Sub
 Sub log_BLTZAL()
-	Print #11, "BLTZAL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BLTZAL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BLTZALL()
-	Print #11, "BLTZALL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BLTZALL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BLTZL()
-	Print #11, "BLTZL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BLTZL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BNE()
-	Print #11, "BNE " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BNE " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BNEL()
-	Print #11, "BNEL " & log_regs(rs) & "," & (CShort(imm) Shl 2)
+	Print #11, hex(cpu.pc) & ": " & "BNEL " & log_regs(rs) & "," & log_regs(rt) & "," & (CShort(imm) Shl 2)
 End Sub
 Sub log_BREAK()
-
+	Print #11, hex(cpu.pc) & ": " & "BREAK"
 End Sub
 Sub log_DADD()
-
+	Print #11, hex(cpu.pc) & ": " & "DADD " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_DADDI()
-
+	Print #11, hex(cpu.pc) & ": " & "DADDI" & log_regs(rt) & "," & log_regs(rs) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_DADDIU()
-
+	Print #11, hex(cpu.pc) & ": " & "DADDIU " & log_regs(rt) & "," & log_regs(rs) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_DADDU()
-
+	Print #11, hex(cpu.pc) & ": " & "DADD " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_DIV()
-
+	Print #11, hex(cpu.pc) & ": " & "DIV " & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_DIVU()
-
+	Print #11, hex(cpu.pc) & ": " & "DIVU " & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_DSLL()
-
+	Print #11, hex(cpu.pc) & ": " & "DSLL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa
 End Sub
 Sub log_DSLL32()
-
+	Print #11, hex(cpu.pc) & ": " & "DSLL32 " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa
 End Sub
 Sub log_DSLLV()
-
+	Print #11, hex(cpu.pc) & ": " & "DSLLV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_DSRA()
-
+	Print #11, hex(cpu.pc) & ": " & "DSRA " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa
 End Sub
 Sub log_DSRA32()
-
+	Print #11, hex(cpu.pc) & ": " & "DSRA32 " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_DSRAV()
-
+	Print #11, hex(cpu.pc) & ": " & "DSRAV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_DSRL()
-
+	Print #11, hex(cpu.pc) & ": " & "DSRL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_DSRL32()
-
+	Print #11, hex(cpu.pc) & ": " & "DSRL32 " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_DSRLV()
-
+	Print #11, hex(cpu.pc) & ": " & "DSRLV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_DSUB()
-
+	Print #11, hex(cpu.pc) & ": " & "DSUB " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_DSUBU()
-
+	Print #11, hex(cpu.pc) & ": " & "DSUBU " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_J()
-
+	Print #11, hex(cpu.pc) & ": " & "J " & " " & Hex(Target)
 End Sub
 Sub log_JAL()
-
+	Print #11, hex(cpu.pc) & ": " & "JAL " & " " & Hex(Target)
 End Sub
 Sub log_JALR()
-
+	Print #11, hex(cpu.pc) & ": " & "JALR " & " " & log_regs(rs)
 End Sub
 Sub log_JR()
-
+	Print #11, hex(cpu.pc) & ": " & "JR " & " " & log_regs(rs)
 End Sub
 Sub log_LB()
-
+	Print #11, hex(cpu.pc) & ": " & "LB " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LBU()
-
+	Print #11, hex(cpu.pc) & ": " & "LBUI " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LD()
-
+	Print #11, hex(cpu.pc) & ": " & "LD " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LDL()
-
+	Print #11, hex(cpu.pc) & ": " & "LDL " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LDR()
-
+	Print #11, hex(cpu.pc) & ": " & "LDR " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LH()
-
+	Print #11, hex(cpu.pc) & ": " & "LH " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LHU()
-
+	Print #11, hex(cpu.pc) & ": " & "LHU " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LUI()
-
+	Print #11, hex(cpu.pc) & ": " & "LUI " & "," & log_regs(rt) & "," & Hex(imm Shl 16)
 End Sub
 Sub log_LW()
-
+	Print #11, hex(cpu.pc) & ": " & "LW " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LWL()
-
+	Print #11, hex(cpu.pc) & ": " & "LWL " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LWR()
-
+	Print #11, hex(cpu.pc) & ": " & "LWR " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LWU()
-
+	Print #11, hex(cpu.pc) & ": " & "LWU " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_MFHI()
-
+	Print #11, hex(cpu.pc) & ": " & "MFHI " & log_regs(rd)
 End Sub
 Sub log_MFLO()
-
+	Print #11, hex(cpu.pc) & ": " & "MFLO " & log_regs(rd)
 End Sub
 Sub log_MOVN()
-
+	Print #11, hex(cpu.pc) & ": " & "MOVN " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_MOVZ()
-
+	Print #11, hex(cpu.pc) & ": " & "MOVS " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_MTHI()
-
+	Print #11, hex(cpu.pc) & ": " & "MTHI " & log_regs(rs)
 End Sub
 Sub log_MTLO()
-
+	Print #11, hex(cpu.pc) & ": " & "MTLO " & log_regs(rs)
 End Sub
 Sub log_MULT()
-
+	Print #11, hex(cpu.pc) & ": " & "MULT " & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_MULTU()
-
+	Print #11, hex(cpu.pc) & ": " & "MULTU " & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_NOR()
-
+	Print #11, hex(cpu.pc) & ": " & "NOR " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_OR()
-
-End Sub
+	Print #11, hex(cpu.pc) & ": " & "OR " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
+End Sub	
 Sub log_ORI()
-
+	Print #11, hex(cpu.pc) & ": " & "ORI " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
 End Sub
 Sub log_PREF()
-
+	Print #11, hex(cpu.pc) & ": " & "PREF "
 End Sub
 Sub log_SB()
-
+	Print #11, hex(cpu.pc) & ": " & "SB " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SD()
-
+	Print #11, hex(cpu.pc) & ": " & "SD " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SDL()
-
+	Print #11, hex(cpu.pc) & ": " & "SDL " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SDR()
-
+	Print #11, hex(cpu.pc) & ": " & "SDR " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SH()
-
+	Print #11, hex(cpu.pc) & ": " & "SH " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SLL()
-
+	Print #11, hex(cpu.pc) & ": " & "SLL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_SLLV()
-
+	Print #11, hex(cpu.pc) & ": " & "SLLV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_SLT()
-
+	Print #11, hex(cpu.pc) & ": " & "SLT " & "," & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_SLTI()
-
+	Print #11, hex(cpu.pc) & ": " & "SLTI " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
 End Sub
 Sub log_SLTIU()
-
+	Print #11, hex(cpu.pc) & ": " & "SLTIU " & log_regs(rt) & "," & log_regs(rs) & "," & CShort(imm)
 End Sub
 Sub log_SLTU() 
-
+	Print #11, hex(cpu.pc) & ": " & "SLTU " & "," & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_SRA()
-
+	Print #11, hex(cpu.pc) & ": " & "SRA " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_SRAV()
-
+	Print #11, hex(cpu.pc) & ": " & "SRAV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_SRL()
-
+	Print #11, hex(cpu.pc) & ": " & "SRL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_SRLV()
-
+	Print #11, hex(cpu.pc) & ": " & "SRLV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_SUB()
-
+	Print #11, hex(cpu.pc) & ": " & "SUB "
 End Sub
 Sub log_SUBU()
-
+	Print #11, hex(cpu.pc) & ": " & "SUBU " & log_regs(rd) & ": " & Hex(cpu.reg(rd).r0) & ", " & log_regs(rs) & ": " & Hex(cpu.reg(rs).r0) & ", " & log_regs(rt) & ": " & Hex(cpu.reg(rt).r0)
+	Print #11, "Opcode: " & Hex(cpu.opcode)
 End Sub
 Sub log_SW()
-
+	Print #11, hex(cpu.pc) & ": " & "SW "
 End Sub
 Sub log_SWL()
-
+	Print #11, hex(cpu.pc) & ": " & "SWL "
 End Sub
 Sub log_SWR()
-
+	Print #11, hex(cpu.pc) & ": " & "SWR "
 End Sub
 Sub log_SYNC()
-
+	Print #11, hex(cpu.pc) & ": " & "SYNC "
 End Sub
 Sub log_SYSCALL()
-
+	Print #11, hex(cpu.pc) & ": " & "SYSCALL "
 End Sub
 Sub log_TEQ()
-
+	Print #11, hex(cpu.pc) & ": " & "TEQ "
 End Sub
 Sub log_TEQI()
-
+	Print #11, hex(cpu.pc) & ": " & "TEQI "
 End Sub
 Sub log_TGE()
-
+	Print #11, hex(cpu.pc) & ": " & "TGE "
 End Sub
 Sub log_TGEI()
-
+	Print #11, hex(cpu.pc) & ": " & "TGEI "
 End Sub
 Sub log_TGEIU()
-
+	Print #11, hex(cpu.pc) & ": " & "TGEIU "
 End Sub
 Sub log_TGEU()
-
+	Print #11, hex(cpu.pc) & ": " & "TGEU "
 End Sub
 Sub log_TLT()
-
+	Print #11, hex(cpu.pc) & ": " & "TLT "
 End Sub
 Sub log_TLTI()
-
+	Print #11, hex(cpu.pc) & ": " & "TLTI "
 End Sub
 Sub log_TLTIU()
-
+	Print #11, hex(cpu.pc) & ": " & "TLTIU "
 End Sub
 Sub log_TLTU()
-
+	Print #11, hex(cpu.pc) & ": " & "TLTU "
 End Sub
 Sub log_TNE()
-
+	Print #11, hex(cpu.pc) & ": " & "TNE "
 End Sub
 Sub log_TNEI()
-
+	Print #11, hex(cpu.pc) & ": " & "TNEI "
 End Sub
 Sub log_XOR()
-	
+		Print #11, hex(cpu.pc) & ": " & "XOR "
 End Sub
 Sub log_XORI()
-
+	Print #11, hex(cpu.pc) & ": " & "XORI "
 End Sub
 Sub log_DEFAULT()
-
+	Print #11, "FAILED OP" 
 End Sub
 
 Sub mmilog_DIV1()
@@ -1107,7 +1109,7 @@ Sub cp0log_MFBPC()
 
 End Sub
 Sub cp0log_MFC0()
-	Print "HI YALL!!!!!!!"
+	Print #11, hex(cpu.pc) & ": " & "MFC0: " & log_regs(rt) & " : " & rd
 End Sub
 Sub cp0log_MFDAB()
 
@@ -1137,7 +1139,7 @@ Sub cp0log_MTBPC()
 
 End Sub
 Sub cp0log_MTC0()
-
+	Print #11, hex(cpu.pc) & ": " & "MTC0: " & log_regs(rt) & " : " & rd
 End Sub
 Sub cp0log_MTDAB()
 
@@ -1315,5 +1317,10 @@ Sub logs_MMI3()
 End Sub
 Sub pain()
 	log_NORMAL(cpu.opcode Shr 26)()
-	Sleep
+	Print #11, "Count: " & Hex(cop0Regs.count)
+	If cpu.PC = &h9fc42560 Then 
+		Print #11, "V0: " & Hex(cpu.reg(2).r0)
+		Print #11, "V1: " & Hex(cpu.reg(3).r0)
+		Print #11, "A0: " & Hex(cpu.reg(4).r0)
+	EndIf
 End Sub

@@ -10,7 +10,6 @@ Declare Sub updateTimers()
 Declare Sub write32Timer(addr As ULong, value As ulong)
 Sub write8Timer(addr As ULong, value As UByte)
 	Print "writing timer: " & Hex(value)
-	Sleep
 	Select Case addr
 		Case &h10000000
 			timers(0).TN_Count = value 
@@ -44,7 +43,6 @@ Sub write8Timer(addr As ULong, value As UByte)
 End Sub
 Sub write16Timer(addr As ULong, value As ushort)
 	Print "writing timer: " & Hex(value)
-	Sleep
 	Select Case addr
 		Case &h10000000
 			timers(0).TN_Count = value 
@@ -79,7 +77,6 @@ End Sub
 Sub write32Timer(addr As ULong, value As ULong)
 	value And= &hFFFF
 	Print "writing timer: " & Hex(value)
-	sleep
 	Select Case addr
 		Case &h10000000
 			timers(0).TN_Count = value 
@@ -215,7 +212,6 @@ Function read32Timer(addr As ULong) As ULong
 End Function
 Sub tickTimer()
 	For i As Integer = 0 To 3
-		
 		If timers(i).TN_Mode > 0  Then 
 			timers(i).clocks += 1
 			updateTimers()
