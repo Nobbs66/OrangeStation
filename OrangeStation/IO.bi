@@ -1,0 +1,28 @@
+Enum ee_ioRegs
+
+	D_CTRL			=	&h1000E000
+	D_STAT			=	&h1000E010
+	D_PCR				= 	&h1000E020
+	D_SQWC			=	&h1000E030
+	D_RBSR			=	&h1000E040
+	D_RBOR			=	&h1000E050
+	D_STADR			=	&h1000E060
+	
+	STDIO_TX 		= 	&h1000F180
+	STDIO_RX			=	&h1000F1C0
+	
+	MSCOM				=	&h1000F200
+	SMCOM				=	&h1000F210
+	MSFLAG			=	&h1000F220
+	SMFLAG			=	&h1000F230
+	SIF_CTRL			= 	&h1000F240
+	
+	INTC_STAT 		= 	&h1000F400
+	
+	MCH_RICM 		= 	&h1000F430
+	MCH_DRD 			= 	&h1000F440
+	
+	DMAC_EnableR 	= 	&h1000F520
+	DMAC_EnableW 	= 	&h1000F590
+	
+End Enum

@@ -223,7 +223,7 @@ Sub updateTimers()
 		If timers(i).TN_Mode > 0 Then 
 			Select Case timers(i).TN_Mode And 3
 				Case 3 'HBLANK
-					If timers(i).clocks = 15000 Then 
+					If timers(i).clocks = 9371 Then 
 						timers(i).TN_Count += 1
 						timers(i).clocks = 0 
 						Print  #99, "Tn_Count " & timers(0).TN_Count

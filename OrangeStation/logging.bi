@@ -441,6 +441,11 @@ Sub log_BNEL()
 End Sub
 Sub log_BREAK()
 	Print #11, hex(cpu.pc) & ": " & "BREAK"
+	Print "[Critical] Breakpoint Exception 0x:" & Hex(cpu.PC)
+	For i As Integer = 0 To 31
+		Print log_regs(i) & ": " & Hex(cpu.reg(i).uint3) & "_" & Hex(cpu.reg(i).uint2) & "_" & Hex(cpu.reg(i).uint1) & "_" & Hex(cpu.reg(i).uint0)
+	Next
+	Print ""
 End Sub
 Sub log_DADD()
 	Print #11, hex(cpu.pc) & ": " & "DADD " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
@@ -452,7 +457,7 @@ Sub log_DADDIU()
 	Print #11, hex(cpu.pc) & ": " & "DADDIU " & log_regs(rt) & "," & log_regs(rs) & "," & (CShort(imm)Shl 2)
 End Sub
 Sub log_DADDU()
-	Print #11, hex(cpu.pc) & ": " & "DADD " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
+	Print #11, hex(cpu.pc) & ": " & "DADDU " & log_regs(rd) & "," & log_regs(rs) & "," & log_regs(rt)
 End Sub
 Sub log_DIV()
 	Print #11, hex(cpu.pc) & ": " & "DIV " & "," & log_regs(rs) & "," & log_regs(rt)
@@ -506,13 +511,13 @@ Sub log_JR()
 	Print #11, hex(cpu.pc) & ": " & "JR " & " " & log_regs(rs)
 End Sub
 Sub log_LB()
-	Print #11, hex(cpu.pc) & ": " & "LB " & "," & log_regs(rt) & "," & Hex(CShort(imm))
+	Print #11, hex(cpu.pc) & ": " & "LB " & log_regs(rt) & "," & Hex(imm) & "," & log_regs(rs)
 End Sub
 Sub log_LBU()
 	Print #11, hex(cpu.pc) & ": " & "LBUI " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_LD()
-	Print #11, hex(cpu.pc) & ": " & "LD " & "," & log_regs(rt) & "," & Hex(CShort(imm))
+	Print #11, hex(cpu.pc) & ": " & "LD " & log_regs(rt) & "," & Hex(imm) & "," & log_regs(rs)
 End Sub
 Sub log_LDL()
 	Print #11, hex(cpu.pc) & ": " & "LDL " & "," & log_regs(rt) & "," & Hex(CShort(imm))
@@ -530,7 +535,7 @@ Sub log_LUI()
 	Print #11, hex(cpu.pc) & ": " & "LUI " & "," & log_regs(rt) & "," & Hex(imm Shl 16)
 End Sub
 Sub log_LW()
-	Print #11, hex(cpu.pc) & ": " & "LW " & "," & log_regs(rt) & "," & Hex(CShort(imm))
+	Print #11, hex(cpu.pc) & ": " & "LW " & log_regs(rt) & "," & Hex(imm) & "," & log_regs(rs)
 End Sub
 Sub log_LWL()
 	Print #11, hex(cpu.pc) & ": " & "LWL " & "," & log_regs(rt) & "," & Hex(CShort(imm))
@@ -578,10 +583,10 @@ Sub log_PREF()
 	Print #11, hex(cpu.pc) & ": " & "PREF "
 End Sub
 Sub log_SB()
-	Print #11, hex(cpu.pc) & ": " & "SB " & "," & log_regs(rt) & "," & Hex(CShort(imm))
+	Print #11, hex(cpu.pc) & ": " & "SB " & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SD()
-	Print #11, hex(cpu.pc) & ": " & "SD " & "," & log_regs(rt) & "," & Hex(CShort(imm))
+	Print #11, hex(cpu.pc) & ": " & "SD " & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SDL()
 	Print #11, hex(cpu.pc) & ": " & "SDL " & "," & log_regs(rt) & "," & Hex(CShort(imm))
@@ -593,7 +598,11 @@ Sub log_SH()
 	Print #11, hex(cpu.pc) & ": " & "SH " & "," & log_regs(rt) & "," & Hex(CShort(imm))
 End Sub
 Sub log_SLL()
-	Print #11, hex(cpu.pc) & ": " & "SLL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
+	If cpu.opcode = 0 Then 
+		Print #11, Hex(cpu.pc) & ": " & "NOP"
+	Else 
+		Print #11, hex(cpu.pc) & ": " & "SLL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
+	EndIf
 End Sub
 Sub log_SLLV()
 	Print #11, hex(cpu.pc) & ": " & "SLLV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
@@ -617,10 +626,10 @@ Sub log_SRAV()
 	Print #11, hex(cpu.pc) & ": " & "SRAV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_SRL()
-	Print #11, hex(cpu.pc) & ": " & "SRL " & "," & log_regs(rd) & "," & log_regs(rt) & "," & sa 
+	Print #11, hex(cpu.pc) & ": " & "SRL " & log_regs(rd) & "," & log_regs(rt) & "," & sa 
 End Sub
 Sub log_SRLV()
-	Print #11, hex(cpu.pc) & ": " & "SRLV " & "," & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
+	Print #11, hex(cpu.pc) & ": " & "SRLV " & log_regs(rd) & "," & log_regs(rt) & "," & log_regs(rs)
 End Sub
 Sub log_SUB()
 	Print #11, hex(cpu.pc) & ": " & "SUB "
@@ -715,7 +724,7 @@ Sub mmilog_MFHI1()
 
 End Sub
 Sub mmilog_MFLO1()
-
+	Print 
 End Sub
 Sub mmilog_MFSA()
 
@@ -1317,10 +1326,4 @@ Sub logs_MMI3()
 End Sub
 Sub pain()
 	log_NORMAL(cpu.opcode Shr 26)()
-	Print #11, "Count: " & Hex(cop0Regs.count)
-	If cpu.PC = &h9fc42560 Then 
-		Print #11, "V0: " & Hex(cpu.reg(2).r0)
-		Print #11, "V1: " & Hex(cpu.reg(3).r0)
-		Print #11, "A0: " & Hex(cpu.reg(4).r0)
-	EndIf
 End Sub

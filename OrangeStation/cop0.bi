@@ -37,14 +37,41 @@ Type cop0Regs
 			errorEPC As ULong	'30
 			res9 As ULong		'31
 		End Type
+		INTC_Stat As ULong
 	End Union
 End Type
 Dim Shared cop0Regs As cop0Regs
-
+Declare Sub write_Cop0Reg(reg As UByte, value As ULong)
+Declare Function read_Cop0Reg(reg As UByte) As ULong
 Sub initCop0()
 	cop0Regs.prId = &h00002e20
 	cop0Regs.count = 0
 End Sub
 Sub run_COP0()
-	cop0Regs.count += 1
+	cop0Regs.count += 2
+	If cop0Regs.count = cop0Regs.compare Then 
+		cop0Regs.cause Or= (1 Shl 15)
+	EndIf
+End Sub
+Function readCop0Reg(reg As UByte) As ULong
+	Select Case reg
+		Case 0 To &H31
+			Return cop0Regs.reg(reg)
+		Case Else 
+			Print "Invalid COP0 Read: " & reg
+	End Select
+End Function
+Sub write_Cop0Reg(reg As UByte, value As ULong)
+	Select Case reg
+		Case 11
+			cop0Regs.cause And= Not(1 Shl 15)
+			cop0Regs.reg(reg) = value
+			Print "Cop0 Compare WRite 0x" & Hex(value)
+			sleep
+		Case Else
+			cop0Regs.reg(reg) = value
+	End Select 
+End Sub
+Sub generateExecption()
+	
 End Sub

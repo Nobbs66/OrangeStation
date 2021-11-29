@@ -5,7 +5,7 @@ Using fb
 Open "tty.txt" For Output As #88
 Open "log0.txt" For Output As #99
 
-
+Dim Shared stepping As UByte
 #Include "types.bi"
 
 #Include Once "bus.bi"
@@ -13,13 +13,16 @@ Open "log0.txt" For Output As #99
 #Include Once "ee.bi"
 
 
+#Include Once "iop_cop0.bi"
+#Include Once "iop.bi"
 
-ScreenRes(640,900,32)
+
+ScreenRes(640,1100,32)
 Declare Sub loadBIOS
 Sub loadBIOS()
 	Dim regs(0 To 31) As uint128
 	If FileExists("bios\bios.bin") Then 
-		Open "bios\bios.bin" For Binary As #1
+	Open "bios\slimj.bin" For Binary As #1
 	Else 
 		Print "Please provide a valid bios rom"
 	Sleep
@@ -38,10 +41,14 @@ Sub main()
 	waitForStart()
 	loadBIOS()
 	init_EE()
-	run_EE()
+	init_IOP()
+	Do
+		run_EE(8)
+		run_IOP(1)
+	Loop Until MultiKey(SC_ESCAPE)
+	Cls
 	Print "Exiting"
-	cls
-	Sleep(2000)
+	Sleep 2000
 End Sub
 
 main()
