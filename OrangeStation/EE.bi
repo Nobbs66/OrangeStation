@@ -74,7 +74,7 @@ Sub run_EE(cycles As UByte)
 		If cpu.PC = &h9FC42560 Then dumpRegs()
 		decodeOp()
 		
-		Print "EE PC: " & Hex(cpu.pc) & " : " & Hex(cpu.Opcode)
+		'Print "EE PC: " & Hex(cpu.pc) & " : " & Hex(cpu.Opcode)
 		
 		cpu.PC += 4
 		tickTimer()
@@ -82,8 +82,8 @@ Sub run_EE(cycles As UByte)
 		If MultiKey(SC_BACKSPACE) Then stepping = 0
 		If stepping = 1 Then Print "PC: " & Hex(cpu.pc)
 		If stepping = 1 Then Print "Opcode: 0x" & Hex(cpu.opcode)
-		If stepping = 1 Then Sleep
+		'If stepping = 1 Then Sleep
 		cycles -= 1
 	Loop While(cycles > 0)
-	Sleep(10000)
+	'Sleep(10000)
 End Sub

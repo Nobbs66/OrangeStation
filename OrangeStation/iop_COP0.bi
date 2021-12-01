@@ -25,7 +25,7 @@ End Type
 Dim Shared iop_cop0Reg As iop_cop0Reg
 Declare Sub init_IOP_COP0()
 Sub init_IOP_COP0()
-	iop_cop0Reg.PRID = 2
+	iop_cop0Reg.PRID = &h1F
 	iop_cop0Reg.SR = &h400000
 End Sub
 

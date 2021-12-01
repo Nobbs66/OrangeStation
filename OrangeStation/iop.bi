@@ -7,6 +7,7 @@ Type IOP
 	opcode As ULong
 	branchPC As ULong
 	branchPending As UByte
+	trip As UByte
 End Type
 Type iop_Timer
 	tCount As ULong
@@ -25,26 +26,26 @@ Sub init_IOP()
 	init_IOP_COP0()
 End Sub
 Sub iop_fetchOP()
-	iop.opcode = read32(cpu.PC)
+	iop.opcode = iop_read32(iop.PC)
 End Sub
 
 Sub run_IOP(cycles As UByte)
 	Do
-		iop.reg(0) = 0
-		If cpu.branchPending = 1 Then 
-			fetchOP()
-			decodeOp()
+		If iop.branchPending = 1 Then 
+			If iop.trip = 1 Then Print Hex(iop.pc)
+			iop_fetchOp()
+			iop_DecodeOp()
 			iop.branchPending = 0 
-			iop.PC = cpu.branchPC
+			iop.PC = iop.branchPC
 		EndIf
+		iop.reg(0) = 0
 		iop_fetchOP()
-		IOP_DecodeOp()
-		Print "IOP PC: " & Hex(iop.pc) & " : " & Hex(iop.Opcode)
+		iop_DecodeOp()
 		iop.PC += 4
 		iop_runCOP0()
 		iop_timerTick()
 		cycles -= 1
-	Loop While(cycles > 0)
+	Loop While(cycles > 0 And Not(MultiKey(SC_ESCAPE)))
 End Sub
 
 

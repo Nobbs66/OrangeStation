@@ -336,105 +336,122 @@ End Sub
 Function iop_read8(addr As ULong) As UByte
 	Dim value As UByte
 	If addr < &hC0000000 Then 
-		addr And= &h1FFFFFF
+		addr And= &h1FFFFFFF
 		Select Case addr 
 			Case 0 To &h1FFFFF
 				memcpy(@value, @bus.iop_ram(addr And &h1FFFFF), 1)
+			Case &h1F400000 To &h1F500000
+				Print "[CDVD] Read8 0x" & Hex(addr)
+				sleep
 			Case &h1F800000 To &h1F810000
 				Print "[IOP] MMIO Access: 0x" & Hex(addr)
+				Sleep
 			Case &h1F900000 To &h1F900400
 				Print "[IOP] Read SPU2 0x" & Hex(addr)
 			Case &h1Fc00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h1FFFFF), 1)
 		End Select
 	ElseIf addr >= &hFFFE00000 Then 
+		Print "[IOP] Read8 Cache CTRL"
 		Return &hFF
 	EndIf
 	Return value
 End Function
 Function iop_read16(addr As ULong) As UShort
-	Dim value As UByte
+	Dim value As Ushort
 	If addr < &hC0000000 Then 
-		addr And= &h1FFFFFF
+		addr And= &h1FFFFFFF
 		Select Case addr 
 			Case 0 To &h1FFFFF
 				memcpy(@value, @bus.iop_ram(addr And &h1FFFFF), 2)
 			Case &h1F800000 To &h1F810000
 				Print "[IOP] MMIO Access: 0x" & Hex(addr)
+				Sleep
 			Case &h1F900000 To &h1F900400
 				Print "[IOP] Read SPU2 0x" & Hex(addr)
 			Case &h1Fc00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h1FFFFF), 2)
 		End Select
 	ElseIf addr >= &hFFFE00000 Then 
+		Print "[IOP] Read16 Cache CTRL"
 		Return &hFFFF
 	EndIf
 	Return value
 End Function
 Function iop_read32(addr As ULong) As ULong
-	Dim value As UByte
+	Dim value As ULong
 	If addr < &hC0000000 Then 
-		addr And= &h1FFFFFF
+		addr And= &h1FFFFFFF
 		Select Case addr 
 			Case 0 To &h1FFFFF
 				memcpy(@value, @bus.iop_ram(addr And &h1FFFFF), 4)
 			Case &h1F800000 To &h1F810000
-				Print "[IOP] MMIO Access: 0x" & Hex(addr)
+				Print "[IOP] MMIO Read Access: 0x" & Hex(addr)
+				Sleep
 			Case &h1F900000 To &h1F900400
 				Print "[IOP] Read SPU2 0x" & Hex(addr)
 			Case &h1Fc00000 To &h1FFFFFFF
 				memcpy(@value, @bus.bios(addr And &h1FFFFF), 4)
 		End Select
 	ElseIf addr >= &hFFFE00000 Then 
+		Print "[IOP] Read32 Cache CTRL"
 		Return &hFFFFFFFF
 	EndIf
 	Return value
 End Function
-Sub iop_write8(addr As ULong, value As ubyte)
+Sub iop_write8(value As UByte, addr As ULong)
 	If addr < &hC0000000 Then 
-		addr And= &h1FFFFFF
+		addr And= &h1FFFFFFF
 		Select Case addr 
 			Case 0 To &h1FFFFF
 				memcpy(@bus.iop_ram(addr And &h1FFFFF), @value,  1)
+				print "Write 8 0x" & hex(value)
+				sleep
 			Case &h1F800000 To &h1F810000
 				Print "[IOP] MMIO Access: 0x" & Hex(addr)
 			Case &h1F900000 To &h1F900400
 				Print "[IOP] Read SPU2 0x" & Hex(addr)
 			Case &h1Fc00000 To &h1FFFFFFF
 		End Select
-	ElseIf addr >= &hFFFE00000 Then 
+	ElseIf addr >= &hF0000000 then 
 		Print "[IOP] Write Cache Control"
+		Sleep
 	EndIf
 End Sub
-Sub iop_write16(addr As ULong, value As UShort) 
+Sub iop_write16(value As UShort, addr As ULong) 
 	If addr < &hC0000000 Then 
-		addr And= &h1FFFFFF
+		addr And= &h1FFFFFFF
 		Select Case addr 
 			Case 0 To &h1FFFFF
 				memcpy(@bus.iop_ram(addr And &h1FFFFF), @value, 2)
+				print "Write 16: 0x" & hex(value)
 			Case &h1F800000 To &h1F810000
 				Print "[IOP] MMIO Access: 0x" & Hex(addr)
 			Case &h1F900000 To &h1F900400
 				Print "[IOP] Read SPU2 0x" & Hex(addr)
 			Case &h1Fc00000 To &h1FFFFFFF
 		End Select
-	ElseIf addr >= &hFFFE00000 Then 
+	ElseIf addr >= &hF0000000 then 
 		Print "[IOP] Write Cache Control"
+		sleep
 	EndIf
 End Sub
-Sub iop_write32(addr As ULong, value As ULong) 
+Sub iop_write32(value As ULong, addr As ULong) 
 	If addr < &hC0000000 Then 
-		addr And= &h1FFFFFF
+		addr And= &h1FFFFFFF
 		Select Case addr 
 			Case 0 To &h1FFFFF
+				print "Write 32 0x" & hex(value) & " : " & Hex(addr)
 				memcpy(@bus.iop_ram(addr And &h1FFFFF), @value, 4)
 			Case &h1F800000 To &h1F810000
-				Print "[IOP] MMIO Access: 0x" & Hex(addr)
+				Print "[IOP] MMIO Write Access: 0x" & Hex(addr)
 			Case &h1F900000 To &h1F900400
-				Print "[IOP] Read SPU2 0x" & Hex(addr)
+				Print "[IOP] Write SPU2 0x" & Hex(addr)
 			Case &h1Fc00000 To &h1FFFFFFF
+				Print "[IOP] Write32 BIOS 0x" & Hex(addr)
 		End Select
-	ElseIf addr >= &hFFFE00000 Then 
+	ElseIf addr >= &hF0000000 then 
 		Print "[IOP] Write Cache Control"
+		Sleep
 	EndIf
 End Sub

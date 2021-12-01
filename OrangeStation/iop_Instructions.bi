@@ -1,9 +1,3 @@
-'#Define rs (iop.opcode Shr 21) And &h1F
-'#Define rt (iop.opcode Shr 16) And &h1F
-'#Define rd (iop.opcode Shr 11) And &h1F
-'#Define sa ((iop.opcode Shr 6) And &h1F)
-'#Define imm (iop.opcode And &hFFFF)
-'#Define jtarget ((iop.opcode And &h3FFFFFF) Shl 2)
 '#Define _logging
 'ALU Operations
 Declare Sub IOP_ADD()
@@ -83,7 +77,7 @@ Declare Sub IOP_MTC2() 'MTCz
 Declare Sub IOP_SWC2()
 Declare Sub IOP_NULL()
 Declare Sub IOP_decodeOp()
-'#Include "logging.bi"
+'#Include "iop_logging.bi"
 Dim Shared IOP_SPECIAL(0 To 63) As Sub() => _
 {	@IOP_SLL , @IOP_NULL , @IOP_SRL , @IOP_SRA , @IOP_SLLV   , @IOP_NULL , @IOP_SRLV, @IOP_SRAV,_
 	@IOP_JR  , @IOP_JALR , @IOP_NULL, @IOP_NULL, @IOP_SYSCALL, @IOP_BREAK, @IOP_NULL, @IOP_NULL,_
@@ -118,13 +112,13 @@ Sub IOP_ADDI()
 	Dim op_rs As UByte = (iop.opcode Shr 21) And &h1F
 	Dim op_rt As UByte = (iop.opcode Shr 16) And &h1F
 	Dim op_imm As Short = CShort(iop.opcode And &hFFFF)
-	iop.reg(op_rt) = CInt(iop.reg(op_rs)) + op_imm
+	iop.reg(op_rt) = CInt(iop.reg(op_rs)) + CShort(op_imm)
 End Sub
 Sub IOP_ADDIU()
 	Dim op_rs As UByte = (iop.opcode Shr 21) And &h1F
 	Dim op_rt As UByte = (iop.opcode Shr 16) And &h1F
 	Dim op_imm As Short = CShort(iop.opcode And &hFFFF)	
-	iop.reg(op_rt) = CInt(iop.reg(op_rs)) + op_imm
+	iop.reg(op_rt) = CInt(iop.reg(op_rs)) + CShort(op_imm)
 End Sub
 Sub IOP_ADDU()
 	Dim op_rs As UByte = (iop.opcode Shr 21) And &h1F
@@ -294,10 +288,12 @@ Sub IOP_LW()
 	iop.reg(op_rt) = iop_read32(addr)
 End Sub
 Sub IOP_LWL()
-	
+	Print "DIe"
+	Sleep
 End Sub
 Sub IOP_LWR()
-	
+	Print "DIe"
+	Sleep
 End Sub
 Sub IOP_MFHI()
 	Dim op_rd As UByte = (iop.opcode Shr 11) And &h1F
@@ -340,10 +336,12 @@ Sub IOP_SW()
 	If isc = 0 Then iop_write32(iop.reg(op_rt),addr)
 End Sub
 Sub IOP_SWL()
-	
+	Print "DIe"
+	Sleep	
 End Sub
 Sub IOP_SWR()
-	
+	Print "DIe"
+	sleep
 End Sub
 'Misc. Operations
 Sub IOP_SLT()
@@ -381,7 +379,7 @@ Sub IOP_BEQ()
 	Dim op_rs As UByte = (iop.opcode Shr 21) And &h1F
 	Dim op_rt As UByte = (iop.opcode Shr 16) And &h1F
 	Dim op_imm As Short = CShort(iop.opcode And &hFFFF)
-	Dim op_target As Long = imm Shl 2
+	Dim op_target As Long = op_imm Shl 2
 	If iop.reg(op_rs) = iop.reg(op_rt) Then 
 		iop.branchPC = iop.PC + op_target + 4
 		iop.branchPending = 1
@@ -391,7 +389,7 @@ Sub IOP_BGEZ()
 	Dim op_rs As UByte = (iop.opcode Shr 21) And &h1F
 	Dim op_rt As UByte = (iop.opcode Shr 16) And &h1F
 	Dim op_imm As Short = CShort(iop.opcode And &hFFFF)
-	Dim op_target As Long = imm Shl 2
+	Dim op_target As Long = op_imm Shl 2
 	If CInt(iop.reg(op_rs)) >= 0 Then 
 		iop.branchPC = iop.PC + op_target + 4
 		iop.branchPending = 1
